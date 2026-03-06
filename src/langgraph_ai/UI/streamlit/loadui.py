@@ -1,6 +1,6 @@
 import streamlit as st
 from src.langgraph_ai.UI.uiconfig import Config
-
+import os
 
 class LoadStreamlitUI:
 
@@ -19,34 +19,49 @@ class LoadStreamlitUI:
 
         with st.sidebar:
 
+            # Load config options
             llm_options = self.config.get_llm_options()
             usecase_options = self.config.get_usecase_options()
 
             # LLM selection
             self.user_controls["selected_llm"] = st.selectbox(
-                "Select LLM", llm_options
+                "Select LLM",
+                llm_options
             )
 
+            # GROQ configuration
             if self.user_controls["selected_llm"] == "Groq":
 
                 model_options = self.config.get_groq_model_options()
 
                 self.user_controls["selected_groq_model"] = st.selectbox(
-                    "Select Model", model_options
+                    "Select Model",
+                    model_options
                 )
 
                 self.user_controls["GROQ_API_KEY"] = st.text_input(
-                    "API KEY",
+                    "GROQ API KEY",
                     type="password"
                 )
 
                 if not self.user_controls["GROQ_API_KEY"]:
                     st.warning("Get API Key: https://console.groq.com/keys")
 
-            # usecase selection
+            # Usecase selection
             self.user_controls["selected_usecase"] = st.selectbox(
                 "Select Usecase",
                 usecase_options
             )
+
+            # Show Tavily only for tool chatbot
+            if "tool" in self.user_controls["selected_usecase"].lower():
+
+                os.environ["TAVILY_API_KEY"]=self.user_controls["TAVILY_API_KEY"] = st.text_input(
+                    "TAVILY API KEY",
+                    type="password"
+                )
+
+                if not self.user_controls["TAVILY_API_KEY"]:
+                    st.warning("Get API Key: https://tavily.com/")
 
         return self.user_controls

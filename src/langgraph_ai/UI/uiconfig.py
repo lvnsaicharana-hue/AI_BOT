@@ -1,14 +1,28 @@
+import os
 from configparser import ConfigParser
+
+
 class Config:
-    def __init__(self, config_file="src/langgraph_ai/UI/uiconfi.ini"):
-        self.config=ConfigParser()
-        self.config.read(config_file)
+
+    def __init__(self):
+        self.config = ConfigParser()
+
+        current_dir = os.path.dirname(__file__)
+        config_path = os.path.join(current_dir, "uiconfi.ini")
+
+        self.config.read(config_path)
 
     def get_llm_options(self):
-        return self.config["DEFAULT"].get("LLM_OPTIONS").split(", ")
+        value = self.config.get("DEFAULT", "LLM_OPTIONS")
+        return [x.strip() for x in value.split(",")]
+
     def get_usecase_options(self):
-        return self.config["DEFAULT"].get("USECASE_OPTIONS").split(", ")
+        value = self.config.get("DEFAULT", "USECASE_OPTIONS")
+        return [x.strip() for x in value.split(",")]
+
     def get_groq_model_options(self):
-        return self.config["DEFAULT"].get("GROQ_MODEL_OPTIONS").split(", ")
+        value = self.config.get("DEFAULT", "GROQ_MODEL_OPTIONS")
+        return [x.strip() for x in value.split(",")]
+
     def get_page_title(self):
-        return self.config["DEFAULT"].get("PAGE_TITLE")
+        return self.config.get("DEFAULT", "PAGE_TITLE")
